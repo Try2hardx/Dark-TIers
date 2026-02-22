@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark SMP | Official Rankings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+        
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        
+        /* Tier Header Colors */
+        .tier-header-1 { background: rgba(248, 81, 73, 0.15); border-bottom: 3px solid #f85149; color: #ffca28; }
+        .tier-header-2 { background: #21262d; border-bottom: 3px solid #8b949e; }
+        .tier-header-3 { background: #30261c; border-bottom: 3px solid #8d5d2e; }
+        .tier-header-4 { background: #161b22; border-bottom: 3px solid #30363d; }
+        .tier-header-5 { background: #0d1117; border-bottom: 3px solid #21262d; }
+
+        /* Row Backgrounds for Individual Tabs */
+        .row-ht { background: #161b22; border: 1px solid #30363d; }
+        .row-lt { background: #21262d; border: 1px solid #30363d; }
+
+        /* Overall Card Styling */
+        .overall-card { 
+            background: rgba(22, 27, 34, 0.6); 
+            border: 1px solid #30363d; 
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .overall-card:hover { border-color: #f85149; background: #1c2128; transform: translateY(-2px); }
+
+        /* Discord Button Styling */
+        .discord-btn {
+            background: #161b22; border: 1px solid #30363d; padding: 8px 16px; border-radius: 8px;
+            color: #8b949e; font-size: 12px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .discord-btn:hover { border-color: #f85149; color: white; background: #1c2128; }
+
+        /* Nav Tabs */
+        .mode-nav { display: flex; gap: 8px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
+        .nav-tab {
+            background: #161b22; border: 1px solid #30363d; padding: 10px 20px; border-radius: 12px;
+            font-size: 13px; font-weight: 800; text-transform: uppercase; color: #8b949e; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: 0.2s;
+        }
+        .nav-tab.active { background: #21262d; color: white; border-bottom: 3px solid #fff; border-radius: 12px 12px 0 0; }
+        .nav-tab img { width: 18px; height: 18px; object-fit: contain; }
+
+        /* Tier Text Colors */
+        .HT1, .LT1, .RHT1, .RLT1 { color: #ffca28; text-shadow: 0 0 8px rgba(255,202,40,0.3); }
+        .HT2, .LT2, .RHT2, .RLT2 { color: #eceff1; }
+        .HT3, .LT3, .RHT3, .RLT3 { color: #8d5d2e; }
+
+        /* Icon Container for Overall View */
+        .tier-badge-group { display: flex; gap: 12px; margin-left: auto; }
+        .badge-item { display: flex; flex-direction: column; align-items: center; width: 32px; }
+        .badge-icon-box { 
+            background: #0d1117; border: 1px solid #30363d; border-radius: 4px; 
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+        }
+
+        /* Modal Styles */
+        #modal-overlay { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); display: none; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; }
+        
+        .global-score-box {
+            margin-top: 16px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(248, 81, 73, 0.05); border: 1px solid rgba(248, 81, 73, 0.2);
+            padding: 16px 20px; border-radius: 12px;
+        }
+        .global-score-label { color: #f85149; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .global-score-value { color: white; font-size: 24px; font-weight: 900; }
+
+        /* Empty State */
+        .no-data { text-align: center; padding: 100px 0; color: #484f58; font-weight: 900; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <div class="max-w-[1200px] mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">DARK<span class="text-red-500">TIERS</span></h1>
+            
+            <div class="flex items-center gap-4">
+                <input type="text" id="search" placeholder="Search player..." 
+                    class="bg-[#0d1117] border border-[#30363d] rounded-full px-6 py-2 text-sm text-white w-64 focus:outline-none focus:border-red-500">
+                
+                <a href="https://discord.gg/8vTwZqk6RJ" target="_blank" class="discord-btn">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/></svg>
+                    Discord
+                </a>
+            </div>
+        </header>
+
+        <div class="mode-nav">
+            <div class="nav-tab active" onclick="updateView('Overall', this)">Overall</div>
+            <div class="nav-tab" onclick="updateView('Mace Tier', this)"><img src="icons/mace.png"> Mace</div>
+            <div class="nav-tab" onclick="updateView('SMP Tier', this)"><img src="icons/smp.png"> SMP</div>
+            <div class="nav-tab" onclick="updateView('Ground Mace Tier', this)"><img src="icons/ground.png"> Ground</div>
+            <div class="nav-tab" onclick="updateView('Cart Tier', this)"><img src="icons/cart.png"> Cart</div>
+        </div>
+
+        <div id="main-content"></div>
+    </div>
+
+    <div id="modal-overlay" onclick="this.style.display='none'">
+        <div class="bg-[#161b22] border border-[#30363d] rounded-2xl p-10 max-w-sm w-full text-center relative" onclick="event.stopPropagation()">
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcGjwmzNmdB77JbY_9igGC83HVYK5lSx_N9Xs5ii0hBARWu8vB8V7J3b5dyBEXk59GAvoB3gxeaGqy/pub?output=csv';
+        
+        // Base mapping for points
+        const basePoints = { 'HT1': 60, 'LT1': 45, 'HT2': 30, 'LT2': 20, 'HT3': 10, 'LT3': 6, 'HT4': 4, 'LT4': 3, 'HT5': 2, 'LT5': 1 };
+        
+        const modeLabels = ['M', 'S', 'G', 'C'];
+        const modeKeys = ['Mace Tier', 'SMP Tier', 'Ground Mace Tier', 'Cart Tier'];
+        
+        let playersData = [];
+        let currentActiveMode = 'Overall';
+
+        async function init() {
+            Papa.parse(CSV_URL, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(results) {
+                    playersData = results.data.filter(p => p.IGN).map(p => {
+                        let score = 0;
+                        modeKeys.forEach(m => {
+                            if (p[m]) {
+                                // Strip 'R' to calculate points for retired tiers
+                                const cleanTier = p[m].trim().toUpperCase().replace('R', '');
+                                score += basePoints[cleanTier] || 0;
+                            }
+                        });
+                        return { ...p, totalPoints: score };
+                    });
+                    updateView('Overall');
+                }
+            });
+        }
+
+        function updateView(mode, el) {
+            currentActiveMode = mode;
+            if(el) {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            }
+            
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const filteredData = playersData.filter(p => p.IGN.toLowerCase().includes(searchTerm));
+            
+            const content = document.getElementById('main-content');
+            content.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                content.innerHTML = `<div class="no-data">No player data found</div>`;
+                return;
+            }
+
+            mode === 'Overall' ? renderOverall(content, filteredData) : renderTiered(content, mode, filteredData);
+        }
+
+        function renderOverall(container, data) {
+            data.sort((a, b) => b.totalPoints - a.totalPoints).forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = 'overall-card';
+                card.onclick = () => openProfile(p);
+                card.innerHTML = `
+                    <div class="text-2xl font-black italic text-gray-700 w-12 mr-4">${i+1}</div>
+                    <img src="https://minotar.net/helm/${p.IGN}/48" class="rounded-lg mr-6">
+                    <div>
+                        <div class="text-xl font-black text-white">${p.IGN}</div>
+                        <div class="text-xs font-bold text-red-500 uppercase tracking-tighter">
+                           <span class="opacity-50 text-white">◆</span> ${p.totalPoints} TOTAL PTS
+                        </div>
+                    </div>
+                    <div class="tier-badge-group">
+                        ${modeKeys.map((key, index) => renderBadge(modeLabels[index], p[key])).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderBadge(label, tier) {
+            if(!tier || tier === '-') return '';
+            const t = tier.trim().toUpperCase();
+            const iconMap = { 'M': 'mace.png', 'S': 'smp.png', 'G': 'ground.png', 'C': 'cart.png' };
+            return `
+                <div class="badge-item">
+                    <div class="badge-icon-box"><img src="icons/${iconMap[label]}" style="width:18px"></div>
+                    <span class="text-[9px] font-black ${t}">${t}</span>
+                </div>
+            `;
+        }
+
+        function renderTiered(container, mode, data) {
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-1 md:grid-cols-5 gap-3';
+            for (let i = 1; i <= 5; i++) {
+                const col = document.createElement('div');
+                col.innerHTML = `<div class="tier-header-${i} p-4 text-center font-black uppercase italic text-sm rounded-t-xl mb-2">Tier ${i}</div>`;
+                const list = document.createElement('div');
+                
+                data.filter(p => {
+                    const t = (p[mode] || '').toUpperCase();
+                    return t.includes(i.toString()) && !t.includes('R');
+                }).forEach(p => {
+                    const row = document.createElement('div');
+                    const tierVal = (p[mode] || '').toUpperCase();
+                    const bgClass = tierVal.includes('HT') ? 'row-ht' : 'row-lt';
+                    row.className = `flex items-center gap-3 p-2 border rounded mb-1 cursor-pointer hover:border-red-500 ${bgClass}`;
+                    row.onclick = () => openProfile(p);
+                    row.innerHTML = `<img src="https://minotar.net/helm/${p.IGN}/24" class="rounded-sm"><span class="text-xs font-bold truncate">${p.IGN}</span>`;
+                    list.appendChild(row);
+                });
+                col.appendChild(list);
+                grid.appendChild(col);
+            }
+            container.appendChild(grid);
+        }
+
+        function openProfile(p) {
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <img src="https://minotar.net/armor/body/${p.IGN}/120" class="mx-auto mb-6 drop-shadow-2xl">
+                <h2 class="text-3xl font-black text-white italic uppercase tracking-tighter mb-1">${p.IGN}</h2>
+                <p class="text-[#f85149] text-[10px] font-black uppercase tracking-[0.2em] mb-6">${p.Region || 'EU'} RANKING</p>
+                <div class="grid grid-cols-2 gap-4 text-center bg-[#0d1117] p-6 rounded-2xl border border-[#30363d] mb-4">
+                    ${modeKeys.map(key => `
+                        <div>
+                            <p class="text-[9px] text-gray-500 font-bold uppercase mb-1">${key.split(' ')[0]}</p>
+                            <p class="text-lg font-black ${p[key] || ''}">${p[key] || '-'}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="global-score-box">
+                    <span class="global-score-label">Global Score</span>
+                    <span class="global-score-value">${p.totalPoints}</span>
+                </div>
+            `;
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+
+        document.getElementById('search').addEventListener('input', () => updateView(currentActiveMode));
+
+        init();
+    </script>
+</body>
+</html>
