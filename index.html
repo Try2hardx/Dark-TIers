@@ -18,9 +18,9 @@
         .tier-header-4 { background: #161b22; border-bottom: 3px solid #30363d; }
         .tier-header-5 { background: #0d1117; border-bottom: 3px solid #21262d; }
 
-        /* Row Backgrounds for Individual Tabs */
-        .row-ht { background: #161b22; border: 1px solid #30363d; }
-        .row-lt { background: #21262d; border: 1px solid #30363d; }
+        /* Row Backgrounds for Individual Tabs - UPDATED FOR VISIBILITY */
+        .row-ht { background: #10141b; border: 1px solid #442d2d; } /* Darker, slightly reddish-black */
+        .row-lt { background: #2d333b; border: 1px solid #444c56; } /* Lighter, steel-grey */
 
         /* Overall Card Styling */
         .overall-card { 
@@ -118,10 +118,7 @@
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcGjwmzNmdB77JbY_9igGC83HVYK5lSx_N9Xs5ii0hBARWu8vB8V7J3b5dyBEXk59GAvoB3gxeaGqy/pub?output=csv';
-        
-        // Base mapping for points
         const basePoints = { 'HT1': 60, 'LT1': 45, 'HT2': 30, 'LT2': 20, 'HT3': 10, 'LT3': 6, 'HT4': 4, 'LT4': 3, 'HT5': 2, 'LT5': 1 };
-        
         const modeLabels = ['M', 'S', 'G', 'C'];
         const modeKeys = ['Mace Tier', 'SMP Tier', 'Ground Mace Tier', 'Cart Tier'];
         
@@ -136,7 +133,6 @@
                         let score = 0;
                         modeKeys.forEach(m => {
                             if (p[m]) {
-                                // Strip 'R' to calculate points for retired tiers
                                 const cleanTier = p[m].trim().toUpperCase().replace('R', '');
                                 score += basePoints[cleanTier] || 0;
                             }
@@ -217,7 +213,10 @@
                 }).forEach(p => {
                     const row = document.createElement('div');
                     const tierVal = (p[mode] || '').toUpperCase();
+                    
+                    // Logic: If it has HT, use row-ht (Darker), otherwise use row-lt (Lighter)
                     const bgClass = tierVal.includes('HT') ? 'row-ht' : 'row-lt';
+                    
                     row.className = `flex items-center gap-3 p-2 border rounded mb-1 cursor-pointer hover:border-red-500 ${bgClass}`;
                     row.onclick = () => openProfile(p);
                     row.innerHTML = `<img src="https://minotar.net/helm/${p.IGN}/24" class="rounded-sm"><span class="text-xs font-bold truncate">${p.IGN}</span>`;
