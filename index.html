@@ -9,21 +9,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Montserrat:ital,wght@0,400;0,900;1,900&display=swap');
         
-        body { 
-            background-color: #0d1117; 
-            color: #c9d1d9; 
-            font-family: 'Montserrat', sans-serif; 
-            margin: 0; 
-            overflow-x: hidden; 
-            min-height: 100vh;
-            position: relative;
-        }
-
-        h1, .tier-header, .nav-btn { 
-            font-family: 'Orbitron', sans-serif; 
-            letter-spacing: 2px;
-        }
-
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Montserrat', sans-serif; margin: 0; overflow-x: hidden; min-height: 100vh; position: relative; }
+        h1, .tier-header, .nav-btn { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
         .header-container { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; padding: 1rem; }
         @media (min-width: 768px) { .header-container { flex-direction: row; justify-content: space-between; } }
         
@@ -51,6 +38,16 @@
         }
         .overall-card:hover { transform: scale(1.01); border-color: #f85149; background: #1c2128; }
 
+        /* FIX: Prevent long names from breaking modal */
+        .modal-ign { 
+            font-family: 'Montserrat', sans-serif; font-weight: 900; font-style: italic; 
+            text-transform: uppercase; font-size: 1.8rem; text-align: center; 
+            letter-spacing: -1px; margin-bottom: 1rem;
+            word-wrap: break-word; overflow-wrap: break-word; /* This stops the text going across the menu */
+            max-width: 100%; line-height: 1.1;
+        }
+
+        .tier-pill { background: #0d1117; padding: 12px; border-radius: 12px; border: 1px solid #30363d; text-align: center; }
         .tier-badge-group { display: flex; gap: 8px; margin-left: auto; }
         .badge-item { display: flex; flex-direction: column; align-items: center; min-width: 35px; }
         .badge-icon-box { background: #0d1117; border: 1px solid #30363d; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
@@ -61,9 +58,6 @@
         .th-3 { background: rgba(141, 93, 46, 0.1); color: #8d5d2e; border-bottom: 2px solid #8d5d2e; }
 
         #modal-overlay { background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-        .modal-ign { font-family: 'Montserrat', sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 2.2rem; text-align: center; letter-spacing: -1px; margin-bottom: 1rem; }
-        .tier-pill { background: #0d1117; padding: 12px; border-radius: 12px; border: 1px solid #30363d; text-align: center; }
-
         .credit { position: fixed; bottom: 20px; right: 20px; color: #484f58; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; z-index: 50; }
 
         .HT1, .RHT1 { color: #b8860b; font-weight: 900; } .LT1, .RLT1 { color: #ffeb3b; }
@@ -143,7 +137,6 @@
             const baseClass = "modal-ign ";
             const globalRank = sortedOverall.findIndex(player => player.IGN === p.IGN) + 1;
             
-            // Podum Colors Logic
             if (globalRank === 1) return `style="color: #FFD700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);" class="${baseClass}"`;
             if (globalRank === 2) return `style="color: #C0C0C0; text-shadow: 0 0 15px rgba(192, 192, 192, 0.4);" class="${baseClass}"`;
             if (globalRank === 3) return `style="color: #CD7F32; text-shadow: 0 0 15px rgba(205, 127, 50, 0.4);" class="${baseClass}"`;
@@ -174,7 +167,6 @@
                     card.className = 'overall-card';
                     card.onclick = () => openProfile(p);
                     
-                    // Ranking Text Color logic
                     let rankStyle = 'class="text-white"';
                     if (term === "") {
                         if (i === 0) rankStyle = 'style="color: #FFD700"';
@@ -185,8 +177,7 @@
                     card.innerHTML = `
                         <div class="text-xl font-black italic text-gray-800 w-8 mr-4">${i+1}</div>
                         <img src="https://minotar.net/helm/${p.IGN}/40" class="rounded-lg mr-4" onerror="this.src='${FALLBACK_HEAD}'">
-                        <div class="flex flex-col">
-                            <span ${rankStyle} class="font-black text-sm uppercase tracking-tight">${p.IGN}</span>
+                        <div class="flex flex-col max-w-[150px]"> <span ${rankStyle} class="font-black text-sm uppercase tracking-tight truncate">${p.IGN}</span>
                             <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">${p.totalPoints} PTS</span>
                         </div>
                         <div class="tier-badge-group">
@@ -223,9 +214,9 @@
                         div.className = `flex items-center justify-between p-3 mb-2 cursor-pointer bg-[#161b22] border border-[#30363d] rounded-lg hover:border-red-500`;
                         div.onclick = () => openProfile(p);
                         div.innerHTML = `
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 overflow-hidden">
                                 <img src="https://minotar.net/helm/${p.IGN}/24" class="rounded-sm" onerror="this.src='${FALLBACK_HEAD}'">
-                                <span class="text-white font-bold text-xs uppercase">${p.IGN}</span>
+                                <span class="text-white font-bold text-xs uppercase truncate">${p.IGN}</span>
                             </div>
                             <span class="text-[9px] font-black italic ${p[mode].toUpperCase()}">${p[mode]}</span>
                         `;
