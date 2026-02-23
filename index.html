@@ -14,12 +14,18 @@
         .header-container { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; padding: 1rem; }
         @media (min-width: 768px) { .header-container { flex-direction: row; justify-content: space-between; } }
         
+        @keyframes purpleBlueGlow {
+            0% { border-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+            50% { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+            100% { border-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+        }
+
         .discord-btn {
             background: #161b22; border: 1px solid #30363d; padding: 8px 16px; border-radius: 10px;
             font-size: 11px; font-weight: 800; text-transform: uppercase; color: #8b949e; 
             cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s ease; text-decoration: none;
         }
-        .discord-btn:hover { transform: translateY(-4px); border-color: #f85149; box-shadow: 0 4px 15px rgba(248, 81, 73, 0.2); color: white; }
+        .discord-btn:hover { transform: translateY(-4px); border-color: #ffffff; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); color: white; }
 
         .mode-nav { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding: 15px 5px; scrollbar-width: none; }
         .mode-nav::-webkit-scrollbar { display: none; }
@@ -29,21 +35,19 @@
             font-size: 10px; font-weight: 900; text-transform: uppercase; color: #8b949e; 
             cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: 0.2s ease;
         }
-        .nav-btn:hover { transform: translateY(-4px); border-color: #f85149; color: white; }
-        .nav-btn.active { background: #21262d; color: white; border: 1px solid #f85149; box-shadow: 0 0 10px rgba(248, 81, 73, 0.3); }
+        .nav-btn:hover { transform: translateY(-4px); border-color: #ffffff; color: white; }
+        .nav-btn.active { background: #21262d; color: white; border: 1px solid #ffffff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
 
         .overall-card { 
             background: rgba(22, 27, 34, 0.6); border: 1px solid #30363d; border-radius: 12px;
             padding: 12px 16px; display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; transition: 0.2s ease;
         }
-        .overall-card:hover { transform: scale(1.01); border-color: #f85149; background: #1c2128; }
 
-        /* FIX: Prevent long names from breaking modal */
         .modal-ign { 
             font-family: 'Montserrat', sans-serif; font-weight: 900; font-style: italic; 
             text-transform: uppercase; font-size: 1.8rem; text-align: center; 
             letter-spacing: -1px; margin-bottom: 1rem;
-            word-wrap: break-word; overflow-wrap: break-word; /* This stops the text going across the menu */
+            word-wrap: break-word; overflow-wrap: break-word;
             max-width: 100%; line-height: 1.1;
         }
 
@@ -53,7 +57,7 @@
         .badge-icon-box { background: #0d1117; border: 1px solid #30363d; border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
 
         .tier-header { padding: 12px; text-align: center; font-weight: 900; font-style: italic; border-radius: 8px; margin-bottom: 10px; text-transform: uppercase; font-size: 0.8rem; }
-        .th-1 { background: rgba(248, 81, 73, 0.1); color: #ffca28; border-bottom: 2px solid #ffca28; }
+        .th-1 { background: rgba(255, 255, 255, 0.05); color: #ffca28; border-bottom: 2px solid #ffca28; }
         .th-2 { background: #21262d; color: #eceff1; border-bottom: 2px solid #8b949e; }
         .th-3 { background: rgba(141, 93, 46, 0.1); color: #8d5d2e; border-bottom: 2px solid #8d5d2e; }
 
@@ -69,9 +73,9 @@
 <body class="p-4 md:p-8 pb-20">
     <div class="max-w-[1200px] mx-auto">
         <div class="header-container">
-            <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter">DARK<span class="text-red-500">TIERS</span></h1>
+            <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter">DARK<span class="text-gray-400">TIERS</span></h1>
             <div class="flex flex-col md:flex-row items-center gap-4">
-                <input type="text" id="search" placeholder="FIND PLAYER..." class="bg-[#161b22] border border-[#30363d] rounded-lg px-5 py-2 text-xs font-bold text-white uppercase tracking-widest focus:border-red-500 outline-none">
+                <input type="text" id="search" placeholder="FIND PLAYER..." class="bg-[#161b22] border border-[#30363d] rounded-lg px-5 py-2 text-xs font-bold text-white uppercase tracking-widest focus:border-white outline-none">
                 <a href="https://discord.gg/6HvjAWacwN" target="_blank" class="discord-btn">DISCORD</a>
             </div>
         </div>
@@ -106,9 +110,6 @@
         const FALLBACK_HEAD = `https://minotar.net/helm/${CLASSIC_STEVE_UUID}/40`;
         const FALLBACK_FULL = `https://visage.surgeplay.com/full/350/${CLASSIC_STEVE_UUID}`;
 
-        const img1 = new Image(); img1.src = FALLBACK_HEAD;
-        const img2 = new Image(); img2.src = FALLBACK_FULL;
-
         let playersData = [];
         let sortedOverall = [];
         let currentMode = 'Overall';
@@ -131,6 +132,32 @@
                     updateView('Overall');
                 }
             });
+        }
+
+        function applyHoverEffect(element, p) {
+            const color = p.Tabcolor ? p.Tabcolor.trim() : "";
+            
+            element.onmouseenter = () => {
+                element.style.transform = 'scale(1.01)';
+                element.style.background = '#1c2128';
+                
+                if (color.toLowerCase() === 'animated') {
+                    element.style.animation = 'purpleBlueGlow 2s infinite ease-in-out';
+                } else if (color !== "") {
+                    element.style.borderColor = color;
+                    element.style.boxShadow = `0 0 15px ${color}44`;
+                } else {
+                    element.style.borderColor = '#ffffff'; 
+                }
+            };
+
+            element.onmouseleave = () => {
+                element.style.transform = 'scale(1)';
+                element.style.background = 'rgba(22, 27, 34, 0.6)';
+                element.style.borderColor = '#30363d';
+                element.style.boxShadow = 'none';
+                element.style.animation = 'none';
+            };
         }
 
         function getCustomModalStyle(p) {
@@ -166,6 +193,7 @@
                     const card = document.createElement('div');
                     card.className = 'overall-card';
                     card.onclick = () => openProfile(p);
+                    applyHoverEffect(card, p);
                     
                     let rankStyle = 'class="text-white"';
                     if (term === "") {
@@ -178,7 +206,7 @@
                         <div class="text-xl font-black italic text-gray-800 w-8 mr-4">${i+1}</div>
                         <img src="https://minotar.net/helm/${p.IGN}/40" class="rounded-lg mr-4" onerror="this.src='${FALLBACK_HEAD}'">
                         <div class="flex flex-col max-w-[150px]"> <span ${rankStyle} class="font-black text-sm uppercase tracking-tight truncate">${p.IGN}</span>
-                            <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">${p.totalPoints} PTS</span>
+                            <span class="text-[10px] font-black text-white uppercase tracking-widest">${p.totalPoints} PTS</span>
                         </div>
                         <div class="tier-badge-group">
                             ${modeKeys.map((key, idx) => p[key] ? `
@@ -211,8 +239,10 @@
 
                     tierPlayers.forEach(p => {
                         const div = document.createElement('div');
-                        div.className = `flex items-center justify-between p-3 mb-2 cursor-pointer bg-[#161b22] border border-[#30363d] rounded-lg hover:border-red-500`;
+                        div.className = `flex items-center justify-between p-3 mb-2 cursor-pointer bg-[#161b22] border border-[#30363d] rounded-lg`;
                         div.onclick = () => openProfile(p);
+                        applyHoverEffect(div, p);
+                        
                         div.innerHTML = `
                             <div class="flex items-center gap-3 overflow-hidden">
                                 <img src="https://minotar.net/helm/${p.IGN}/24" class="rounded-sm" onerror="this.src='${FALLBACK_HEAD}'">
@@ -253,7 +283,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-500 text-[10px] font-black uppercase tracking-widest">Global Ranking</span>
-                        <span class="text-red-500 text-2xl font-black italic">#${globalRank}</span>
+                        <span class="text-white text-2xl font-black italic">#${globalRank}</span>
                     </div>
                 </div>
             `;
