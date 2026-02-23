@@ -139,15 +139,14 @@
             });
         }
 
-        // Modified to automatically give #1 player Gold
         function getCustomModalStyle(p) {
             const baseClass = "modal-ign ";
             const globalRank = sortedOverall.findIndex(player => player.IGN === p.IGN) + 1;
             
-            // If Rank is 1, return Gold Style
-            if (globalRank === 1) {
-                return `style="color: #FFD700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);" class="${baseClass}"`;
-            }
+            // Podum Colors Logic
+            if (globalRank === 1) return `style="color: #FFD700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);" class="${baseClass}"`;
+            if (globalRank === 2) return `style="color: #C0C0C0; text-shadow: 0 0 15px rgba(192, 192, 192, 0.4);" class="${baseClass}"`;
+            if (globalRank === 3) return `style="color: #CD7F32; text-shadow: 0 0 15px rgba(205, 127, 50, 0.4);" class="${baseClass}"`;
 
             if (!p.Color || p.Color.trim() === "") return `class="${baseClass} text-white"`;
             const colorValue = p.Color.trim();
@@ -175,14 +174,19 @@
                     card.className = 'overall-card';
                     card.onclick = () => openProfile(p);
                     
-                    // Auto-gold logic for text in the list
-                    const nameColor = (i === 0 && term === "") ? 'style="color: #FFD700"' : 'class="text-white"';
+                    // Ranking Text Color logic
+                    let rankStyle = 'class="text-white"';
+                    if (term === "") {
+                        if (i === 0) rankStyle = 'style="color: #FFD700"';
+                        else if (i === 1) rankStyle = 'style="color: #C0C0C0"';
+                        else if (i === 2) rankStyle = 'style="color: #CD7F32"';
+                    }
 
                     card.innerHTML = `
                         <div class="text-xl font-black italic text-gray-800 w-8 mr-4">${i+1}</div>
                         <img src="https://minotar.net/helm/${p.IGN}/40" class="rounded-lg mr-4" onerror="this.src='${FALLBACK_HEAD}'">
                         <div class="flex flex-col">
-                            <span ${nameColor} class="font-black text-sm uppercase tracking-tight">${p.IGN}</span>
+                            <span ${rankStyle} class="font-black text-sm uppercase tracking-tight">${p.IGN}</span>
                             <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">${p.totalPoints} PTS</span>
                         </div>
                         <div class="tier-badge-group">
