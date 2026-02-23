@@ -66,7 +66,6 @@
 
         .credit { position: fixed; bottom: 20px; right: 20px; color: #484f58; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; pointer-events: none; z-index: 50; }
 
-        /* HT is Darker, LT is Brighter/Lighter */
         .HT1, .RHT1 { color: #b8860b; font-weight: 900; } .LT1, .RLT1 { color: #ffeb3b; }
         .HT2, .RHT2 { color: #78909c; font-weight: 900; } .LT2, .RLT2 { color: #f5f5f5; }
         .HT3, .RHT3 { color: #5d4037; font-weight: 900; } .LT3, .RLT3 { color: #a1887f; }
@@ -140,8 +139,16 @@
             });
         }
 
+        // Modified to automatically give #1 player Gold
         function getCustomModalStyle(p) {
             const baseClass = "modal-ign ";
+            const globalRank = sortedOverall.findIndex(player => player.IGN === p.IGN) + 1;
+            
+            // If Rank is 1, return Gold Style
+            if (globalRank === 1) {
+                return `style="color: #FFD700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);" class="${baseClass}"`;
+            }
+
             if (!p.Color || p.Color.trim() === "") return `class="${baseClass} text-white"`;
             const colorValue = p.Color.trim();
             if (colorValue.includes('gradient')) {
@@ -167,11 +174,15 @@
                     const card = document.createElement('div');
                     card.className = 'overall-card';
                     card.onclick = () => openProfile(p);
+                    
+                    // Auto-gold logic for text in the list
+                    const nameColor = (i === 0 && term === "") ? 'style="color: #FFD700"' : 'class="text-white"';
+
                     card.innerHTML = `
                         <div class="text-xl font-black italic text-gray-800 w-8 mr-4">${i+1}</div>
                         <img src="https://minotar.net/helm/${p.IGN}/40" class="rounded-lg mr-4" onerror="this.src='${FALLBACK_HEAD}'">
                         <div class="flex flex-col">
-                            <span class="text-white font-black text-sm uppercase tracking-tight">${p.IGN}</span>
+                            <span ${nameColor} class="font-black text-sm uppercase tracking-tight">${p.IGN}</span>
                             <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">${p.totalPoints} PTS</span>
                         </div>
                         <div class="tier-badge-group">
