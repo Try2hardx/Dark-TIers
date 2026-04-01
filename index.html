@@ -14,7 +14,6 @@
           .header-container { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 2rem; padding: 1rem; }
           @media (min-width: 768px) { .header-container { flex-direction: row; justify-content: space-between; } }
 
-          /* Subtle red ambient glow at top */
           body::before {
               content: '';
               position: fixed;
@@ -137,7 +136,6 @@
           .title-row { display: flex; align-items: center; justify-content: space-between; background: rgba(22,27,34,0.8); border: 1px solid #30363d; border-radius: 14px; padding: 14px 20px; transition: border-color 0.2s, box-shadow 0.2s; }
           .title-row:hover { border-color: #e05555; box-shadow: 0 0 10px rgba(200,40,40,0.1); }
 
-          /* Red accent scrollbar */
           ::-webkit-scrollbar { width: 6px; }
           ::-webkit-scrollbar-track { background: #0d1117; }
           ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
@@ -166,7 +164,7 @@
                         </svg>
                         Points
                     </button>
-                    <input type="text" id="search" placeholder="FIND PLAYER..." class="bg-[#161b22] border border-[#30363d] rounded-lg px-5 py-2 text-xs font-bold text-white uppercase tracking-widest outline-none transition-all" style="focus:border-color:#e05555">
+                    <input type="text" id="search" placeholder="FIND PLAYER..." class="bg-[#161b22] border border-[#30363d] rounded-lg px-5 py-2 text-xs font-bold text-white uppercase tracking-widest outline-none transition-all">
                     <a href="https://discord.gg/6HvjAWacwN" target="_blank" class="discord-btn">DISCORD</a>
                </div>
           </div>
@@ -177,6 +175,7 @@
                <div class="nav-btn" onclick="updateView('SMP Tier', this)"><img src="icons/smp.png" class="w-3"> SMP</div>
                <div class="nav-btn" onclick="updateView('Ground Mace Tier', this)"><img src="icons/ground.png" class="w-3"> Ground</div>
                <div class="nav-btn" onclick="updateView('Cart Tier', this)"><img src="icons/cart.png" class="w-3"> Cart</div>
+               <div class="nav-btn" onclick="updateView('UHC Tier', this)"><img src="icons/uhc.png" class="w-3"> UHC</div>
           </div>
           
           <div id="main-content"></div>
@@ -193,9 +192,9 @@
      <script>
           const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcGjwmzNmdB77JbY_9igGC83HVYK5lSx_N9Xs5ii0hBARWu8vB8V7J3b5dyBEXk59GAvoB3gxeaGqy/pub?output=csv';
           const basePoints = { 'HT1': 60, 'LT1': 45, 'HT2': 30, 'LT2': 20, 'HT3': 10, 'LT3': 6, 'HT4': 4, 'LT4': 3, 'HT5': 2, 'LT5': 1 };
-          const modeKeys = ['Mace Tier', 'SMP Tier', 'Ground Mace Tier', 'Cart Tier'];
-          const modeLabels = ['Mace', 'SMP', 'Ground', 'Cart'];
-          const iconPaths = ['icons/mace.png', 'icons/smp.png', 'icons/ground.png', 'icons/cart.png'];
+          const modeKeys = ['Mace Tier', 'SMP Tier', 'Ground Mace Tier', 'Cart Tier', 'UHC Tier'];
+          const modeLabels = ['Mace', 'SMP', 'Ground', 'Cart', 'UHC'];
+          const iconPaths = ['icons/mace.png', 'icons/smp.png', 'icons/ground.png', 'icons/cart.png', 'icons/uhc.png'];
 
           const titles = [
               { name: 'Paragon',    min: 400, cls: 'title-paragon'    },
